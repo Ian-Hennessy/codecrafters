@@ -36,8 +36,6 @@ public class Main {
                 } else {
                     bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
                 }
-                bufferedReader.close();
-                bufferedWriter.close();
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
             }
