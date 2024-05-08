@@ -36,11 +36,11 @@ public class Main {
                                         CRLF + "Content-Length: " + txt.length() +
                                         CRLF + CRLF + txt;
                         bufferedWriter.write(response);
-                        bufferedWriter.close();
                     } else {
                         bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
                     }
                 }
+                bufferedWriter.close();
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
             }
