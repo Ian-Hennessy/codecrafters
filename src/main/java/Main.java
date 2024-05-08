@@ -28,8 +28,7 @@ public class Main {
                 String path = firstLine.split(" ")[1];
                 if (path == "/") {
                     bufferedWriter.write("HTTP/1.1 OK 200" + CRLF + CRLF);
-                } else {
-                    if (path.split("/")[1] == "echo") {
+                } else if (path.split("/")[1] == "echo") {
                         String txt = path.split("/")[2];
                         String response =
                                 "HTTP/1.1 OK 200" + CRLF + "Content-Type: text/plain" +
