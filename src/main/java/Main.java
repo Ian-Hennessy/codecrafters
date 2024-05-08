@@ -31,10 +31,11 @@ public class Main {
                         new InputStreamReader(clientInput));
                 String firstLine = bufferedReader.readLine();
                 String path = firstLine.split(" ")[1];
-                if (path == "/") {
+                if (path.equals("/")) {
                     bufferedWriter.write("HTTP/1.1 200 OK" + CRLF + CRLF);
                 } else {
                     bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
+                    bufferedWriter.close();
                 }
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
