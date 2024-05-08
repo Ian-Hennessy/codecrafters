@@ -26,9 +26,9 @@ public class Main {
                         new InputStreamReader(clientInput));
                 String firstLine = bufferedReader.readLine();
                 String path = firstLine.split(" ")[1];
-                if (path == "/") {
+                if (path.equals("/")) {
                     bufferedWriter.write("HTTP/1.1 OK 200" + CRLF + CRLF);
-                } else if (path.split("/")[0].equals("echo")) {
+                } else if (path.split("/")[1].equals("echo")) {
                         String txt = path.split("/")[2];
                         String response =
                                 "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
