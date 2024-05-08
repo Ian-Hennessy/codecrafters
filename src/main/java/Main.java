@@ -27,7 +27,7 @@ public class Main {
                 String firstLine = bufferedReader.readLine();
                 String path = firstLine.split(" ")[1];
                 if (path.equals("/")) {
-                    bufferedWriter.write("HTTP/1.1 OK 200" + CRLF + CRLF);
+                    bufferedWriter.write("HTTP/1.1 200 OK" + CRLF + CRLF);
                 } else if (path.split("/")[1].equals("echo")) {
                         String txt = path.split("/")[2];
                         String response =
