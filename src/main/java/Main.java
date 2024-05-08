@@ -31,11 +31,13 @@ public class Main {
                 } else if (path.split("/")[1] == "echo") {
                         String txt = path.split("/")[2];
                         String response =
-                                "HTTP/1.1 OK 200" + CRLF + "Content-Type: text/plain" +
+                                "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
                                         CRLF + "Content-Length: " + txt.length() +
                                         CRLF + CRLF + txt;
                         bufferedWriter.write(response);
-                    }
+                    } else {
+                    bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
+                }
                 bufferedWriter.close();
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
