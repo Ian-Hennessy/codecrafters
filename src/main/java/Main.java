@@ -35,7 +35,18 @@ public class Main {
                                         CRLF + "Content-Length: " + txt.length() +
                                         CRLF + CRLF + txt;
                         bufferedWriter.write(response);
-                    } else {
+                    } else if (path.split("/")[1].equals("user-agent")) {
+                    String host = bufferedReader.readLine();
+                    String agentLine = bufferedReader.readLine();
+                    if (agentLine.split(" ")[0].equals("User-Agent:")) {
+                        String content = agentLine.split(" ")[1];
+                        String response =
+                                "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
+                                        CRLF + "Content-Length: " + content.length() +
+                                CRLF + CRLF + content;
+                        bufferedWriter.write(response);
+                    }
+                } else {
                     bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
                 }
                 bufferedWriter.close();
