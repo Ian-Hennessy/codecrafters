@@ -4,17 +4,19 @@ import java.net.Socket;
 import java.util.Objects;
 
 public class Main {
-    private Socket clientSocket;
+    private static Socket clientSocket;
 
     public void clientHandler(Socket client) {
-        this.clientSocket = client;
+        clientSocket = client;
     }
-    String CRLF = "\r\n";
-
-    public void run() {
+    static String CRLF = "\r\n";
+    public static void main(String[] args) {
+        run();
+    }
+    private static void run() {
         try {
             process();
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         } finally {
             try {
@@ -25,7 +27,7 @@ public class Main {
         }
     }
 
-    private void process() throws IOException{
+    private static void process () throws IOException {
 
         OutputStream clientOutput = clientSocket.getOutputStream();
         InputStream clientInput = clientSocket.getInputStream();
@@ -42,14 +44,14 @@ public class Main {
 
         } else if (path.split("/")[1].equals("echo")) {
 
-                String txt = path.split("/")[2];
-                String response =
-                        "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
-                                CRLF + "Content-Length: " + txt.length() +
-                                CRLF + CRLF + txt;
-                bufferedWriter.write(response);
+            String txt = path.split("/")[2];
+            String response =
+                    "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
+                            CRLF + "Content-Length: " + txt.length() +
+                            CRLF + CRLF + txt;
+            bufferedWriter.write(response);
 
-            } else if (path.split("/")[1].equals("user-agent")) {
+        } else if (path.split("/")[1].equals("user-agent")) {
 
             String host = bufferedReader.readLine();
             String agentLine = bufferedReader.readLine();
@@ -60,7 +62,7 @@ public class Main {
                 String response =
                         "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
                                 CRLF + "Content-Length: " + content.length() +
-                        CRLF + CRLF + content;
+                                CRLF + CRLF + content;
                 bufferedWriter.write(response);
 
             }
