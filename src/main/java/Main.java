@@ -12,17 +12,12 @@ public class Main {
 
         // Uncomment this block to pass the first stage
 
-        ServerSocket serverSocket = null;
-        Socket clientSocket = null;
-
         //       serverSocket = new ServerSocket(4221);
 //       serverSocket.setReuseAddress(true);
 //       clientSocket = serverSocket.accept(); // Wait for connection from client.
 //       System.out.println("accepted new connection");
-        try {
-            serverSocket = new ServerSocket(4221);
-            try {
-                clientSocket = serverSocket.accept();
+        try (ServerSocket serverSocket = new ServerSocket(4221)) {
+            try (Socket clientSocket = serverSocket.accept()) {
                 OutputStream clientOutput = clientSocket.getOutputStream();
                 InputStream clientInput = clientSocket.getInputStream();
                 BufferedWriter bufferedWriter =
@@ -35,8 +30,8 @@ public class Main {
                     bufferedWriter.write("HTTP/1.1 200 OK" + CRLF + CRLF);
                 } else {
                     bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
-                    bufferedWriter.close();
                 }
+                bufferedWriter.close();
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
             }
