@@ -14,25 +14,21 @@ public class Main {
         ServerSocket serverSocket = null;
         Socket clientSocket = null;
 
-        try {
-//       serverSocket = new ServerSocket(4221);
+        //       serverSocket = new ServerSocket(4221);
 //       serverSocket.setReuseAddress(true);
 //       clientSocket = serverSocket.accept(); // Wait for connection from client.
 //       System.out.println("accepted new connection");
+        try {
+            serverSocket = new ServerSocket(4221);
             try {
-                serverSocket = new ServerSocket(4221);
-                try {
-                    clientSocket = serverSocket.accept();
-                    OutputStream clientOutput = clientSocket.getOutputStream();
-                    BufferedWriter bufferedWriter =
-                            new BufferedWriter(new OutputStreamWriter(clientOutput));
-                    bufferedWriter.write("HTTP/1.1 200 OK" + CRLF + CRLF);
-                    bufferedWriter.close();
-                } catch (IOException e) {
-                    System.out.println("IOExceltion:" + e.getMessage());
-                }
+                clientSocket = serverSocket.accept();
+                OutputStream clientOutput = clientSocket.getOutputStream();
+                BufferedWriter bufferedWriter =
+                        new BufferedWriter(new OutputStreamWriter(clientOutput));
+                bufferedWriter.write("HTTP/1.1 200 OK" + CRLF + CRLF);
+                bufferedWriter.close();
             } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
+                System.out.println("IOException:" + e.getMessage());
             }
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
