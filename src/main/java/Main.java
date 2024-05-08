@@ -30,6 +30,7 @@ public class Main {
                 bufferedWriter.write("HTTP/1.1 200 OK" + CRLF +
                         "Content-Type: text/plain" + CRLF + "Content-Length: " + parsed.length()
                 + CRLF + parsed);
+                bufferedWriter.close();
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
             }
