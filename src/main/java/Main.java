@@ -26,12 +26,10 @@ public class Main {
                         new InputStreamReader(clientInput));
                 String firstLine = bufferedReader.readLine();
                 String path = firstLine.split(" ")[1];
-                if (path.equals("/")) {
-                    bufferedWriter.write("HTTP/1.1 200 OK" + CRLF + CRLF);
-                } else {
-                    bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
-                }
-                bufferedWriter.close();
+                String parsed = path.split("/")[1];
+                bufferedWriter.write("HTTP/1.1 200 OK" + CRLF +
+                        "Content-Type: text/plain" + CRLF + "Content-Length: " + parsed.length()
+                + CRLF + parsed);
             } catch (IOException e) {
                 System.out.println("IOException:" + e.getMessage());
             }
