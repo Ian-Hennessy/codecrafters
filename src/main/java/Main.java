@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class Main {
@@ -13,7 +14,8 @@ public class Main {
     public static void main(String[] args) {
         run();
     }
-    private static void run() {
+
+    public static void run() {
         try {
             process();
         } catch (IOException e) {
@@ -52,19 +54,19 @@ public class Main {
             bufferedWriter.write(response);
 
         } else if (path.split("/")[1].equals("user-agent")) {
+            while (bufferedReader.readLine() != null) {
+                String host = bufferedReader.readLine();
+                String agentLine = bufferedReader.readLine();
 
-            String host = bufferedReader.readLine();
-            String agentLine = bufferedReader.readLine();
+                if (agentLine.split(" ")[0].equals("User-Agent:")) {
 
-            if (agentLine.split(" ")[0].equals("User-Agent:")) {
-
-                String content = agentLine.split(" ")[1];
-                String response =
-                        "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
-                                CRLF + "Content-Length: " + content.length() +
-                                CRLF + CRLF + content;
-                bufferedWriter.write(response);
-
+                    String content = agentLine.split(" ")[1];
+                    String response =
+                            "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
+                                    CRLF + "Content-Length: " + content.length() +
+                                    CRLF + CRLF + content;
+                    clientOutput.write(response.getBytes(StandardCharsets.UTF_8));
+                }
             }
         } else {
 
