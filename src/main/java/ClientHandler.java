@@ -43,7 +43,7 @@ public class ClientHandler implements Runnable {
         if (path.equals("/")) {
             clientOutputStream.write(("HTTP/1.1 200 OK" + CRLF + CRLF).getBytes());
         } else if (path.startsWith("/files")) {
-            String filepath = path.split("/")[1];
+            String filepath = path.replaceFirst("/files/", "");
             System.out.println("The filepath is: " + filepath);
             File fileAtPath = new File(dirName, filepath);
             if (fileAtPath.exists()) {
