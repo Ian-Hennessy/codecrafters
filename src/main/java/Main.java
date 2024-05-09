@@ -9,7 +9,7 @@ public class Main {
                 while (true) {
                     serverSocket.setReuseAddress(true);
                     Socket clientSocket = serverSocket.accept();
-                    clientHandler CH = new clientHandler(clientSocket);
+                    ClientHandler CH = new ClientHandler(clientSocket);
                     Thread thread = new Thread(CH);
                     thread.start();
 
