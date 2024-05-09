@@ -38,32 +38,30 @@ public class ClientHandler implements Runnable {
                 new BufferedReader(new InputStreamReader(clientInputStream));
         BufferedWriter clientWriter =
                 new BufferedWriter(new OutputStreamWriter(clientOutputStream));
-        String requestFirstLine = clientReader.readLine();
-        String path = requestFirstLine.split(" ")[1];
+        String firstLine = clientReader.readLine();
+        String path = firstLine.split(" ")[1];
         if (path.equals("/")) {
             clientOutputStream.write(("HTTP/1.1 200 OK" + CRLF + CRLF).getBytes());
         } else if (path.startsWith("/files")) {
             String filepath = path.replaceFirst("/files/", "");
             System.out.println("The filepath is: " + filepath);
             File fileAtPath = new File(dirName, filepath);
-            if (fileAtPath.exists()) {
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(fileAtPath));
-                    String line;
-                    StringBuilder fileContent = new StringBuilder();
-                    while ((line = br.readLine()) != null) {
-                        fileContent.append(line);
-                    }
-                    String response = "HTTP/1.1 200 OK" + CRLF +
-                            "Content-Type: application/octet-stream" + CRLF +
-                            "Content-Length: " + fileContent.length() + CRLF + CRLF +
-                            fileContent.toString();
-                    clientOutputStream.write(response.getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
+            if (!fileAtPath.exists()) {
                 String response = "HTTP/1.1 404 FILE NOT FOUND AT PATH" + CRLF + CRLF;
+                clientOutputStream.write(response.getBytes());
+            } else {
+                System.out.println("File found at filepath " + filepath);
+                BufferedReader br = new BufferedReader(new FileReader(fileAtPath));
+                String line;
+                StringBuilder fileContent = new StringBuilder();
+                while ((line = br.readLine()) != null) {
+                    fileContent.append(line);
+                }
+                String response = "HTTP/1.1 200 OK" + CRLF +
+                        "Content-Type: application/octet-stream" + CRLF +
+                        "Content-Length: " + fileContent.length() + CRLF + CRLF +
+                        fileContent;
+                System.out.println("Contents of file: " + fileContent);
                 clientOutputStream.write(response.getBytes());
             }
         } else if (path.split("/")[1].equals("echo")) {
