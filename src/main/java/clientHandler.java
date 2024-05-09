@@ -35,7 +35,6 @@ public class clientHandler implements Runnable {
 
         String firstLine = clientReader.readLine();
         String path = firstLine.split(" ")[1];
-        String command = path.split("/")[0];
         switch (path) {
             case "/" -> {
                 String response = "HTTP/1.1 200 OK" + CRLF + CRLF;
