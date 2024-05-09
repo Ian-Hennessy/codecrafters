@@ -9,6 +9,8 @@ public class Main {
             try (Socket clientSocket = serverSocket.accept()) {
                 clientHandler CH = new clientHandler(clientSocket);
                 CH.run();
+                Thread thread = new Thread(CH);
+                thread.start();
 //                OutputStream clientOutput = clientSocket.getOutputStream();
 //                InputStream clientInput = clientSocket.getInputStream();
 //                BufferedWriter bufferedWriter =
