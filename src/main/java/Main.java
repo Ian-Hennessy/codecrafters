@@ -5,12 +5,13 @@ import java.util.Objects;
 public class Main {
     static String CRLF = "\r\n";
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(4221)) {
-            try (Socket clientSocket = serverSocket.accept()) {
-                clientHandler CH = new clientHandler(clientSocket);
-                CH.run();
-                Thread thread = new Thread(CH);
-                thread.start();
+        while (true) {
+            try (ServerSocket serverSocket = new ServerSocket(4221)) {
+                try (Socket clientSocket = serverSocket.accept()) {
+                    clientHandler CH = new clientHandler(clientSocket);
+                    CH.run();
+                    Thread thread = new Thread(CH);
+                    thread.start();
 //                OutputStream clientOutput = clientSocket.getOutputStream();
 //                InputStream clientInput = clientSocket.getInputStream();
 //                BufferedWriter bufferedWriter =
@@ -41,11 +42,12 @@ public class Main {
 //                    bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
 //                }
 //                bufferedWriter.close();
+                } catch (IOException e) {
+                    System.out.println("IOException:" + e.getMessage());
+                }
             } catch (IOException e) {
-                System.out.println("IOException:" + e.getMessage());
+                System.out.println("IOException: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
         }
     }
 }
