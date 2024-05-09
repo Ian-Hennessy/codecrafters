@@ -54,7 +54,7 @@ public class clientHandler implements Runnable {
                     String val = split[1].strip();
                     if (split[0].equals("User-Agent")) {
                         String response = "HTTP/1.1 200 OK" + CRLF +
-                                "Content-Type: plain/text" + CRLF +
+                                "Content-Type: text/plain" + CRLF +
                                 "Content-Length: " + val.length() +
                                 CRLF + CRLF + val;
                         System.out.println(response);
