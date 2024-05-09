@@ -5,9 +5,10 @@ import java.util.Objects;
 public class Main {
     static String CRLF = "\r\n";
     public static void main(String[] args) {
-        while (true) {
             try (ServerSocket serverSocket = new ServerSocket(4221)) {
-                try (Socket clientSocket = serverSocket.accept()) {
+                while (true) {
+                    serverSocket.setReuseAddress(true);
+                    Socket clientSocket = serverSocket.accept();
                     clientHandler CH = new clientHandler(clientSocket);
                     CH.run();
                     Thread thread = new Thread(CH);
@@ -42,12 +43,9 @@ public class Main {
 //                    bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
 //                }
 //                bufferedWriter.close();
-                } catch (IOException e) {
-                    System.out.println("IOException:" + e.getMessage());
-                }
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
             }
-        }
+        } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
     }
 }
