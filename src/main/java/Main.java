@@ -9,7 +9,14 @@ public class Main {
                 while (true) {
                     serverSocket.setReuseAddress(true);
                     Socket clientSocket = serverSocket.accept();
+                    String dirName;
+                    if (args.length > 1) {
+                        dirName = args[1];
+                    } else {
+                        dirName = "./";
+                    }
                     ClientHandler CH = new ClientHandler(clientSocket);
+                    CH.setDirName(dirName);
                     Thread thread = new Thread(CH);
                     thread.start();
 
