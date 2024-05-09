@@ -45,7 +45,7 @@ public class clientHandler implements Runnable {
                     "Content-Type: text/plain" + CRLF +
                     "Content-Length: " + txt.length() + CRLF + CRLF + txt;
             clientWriter.write(response);
-        } else if (path.equals("/user-agent")) {
+        } else if (path.split("/")[1].equals("user-agent")) {
             String headerPair = clientReader.readLine();
             while (headerPair != null) {
                 String[] split = headerPair.split(":");
