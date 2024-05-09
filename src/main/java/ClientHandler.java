@@ -3,6 +3,16 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
+
+    private String dirName;
+
+    public String getDirName() {
+        return this.dirName;
+    }
+
+    public void setDirName(String directory) {
+        this.dirName = directory;
+    }
     static String CRLF = "\r\n";
     public ClientHandler(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -10,7 +20,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            processRequest();
+            process();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -21,23 +31,53 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-    private void processRequest() throws IOException {
+    private void process() throws IOException {
         InputStream clientInputStream = clientSocket.getInputStream();
         OutputStream clientOutputStream = clientSocket.getOutputStream();
-        BufferedReader bufferedReader =
+        BufferedReader clientReader =
                 new BufferedReader(new InputStreamReader(clientInputStream));
-        BufferedWriter bufferedWriter =
+        BufferedWriter clientWriter =
                 new BufferedWriter(new OutputStreamWriter(clientOutputStream));
-        String requestFirstLine = bufferedReader.readLine();
+        String requestFirstLine = clientReader.readLine();
         String path = requestFirstLine.split(" ")[1];
         if (path.equals("/")) {
             clientOutputStream.write(("HTTP/1.1 200 OK" + CRLF + CRLF).getBytes());
+        } else if (path.startsWith("/files")) {
+            String filepath = path.split("/")[1];
+            System.out.println("The filepath is: " + filepath);
+            File fileAtPath = new File(dirName, filepath);
+            if (fileAtPath.exists()) {
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(fileAtPath));
+                    String line;
+                    StringBuilder fileContent = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        fileContent.append(line);
+                    }
+                    String response = "HTTP/1.1 200 OK" + CRLF +
+                            "Content-Type: application/octet-stream" + CRLF +
+                            "Content-Length: " + fileContent.length() + CRLF + CRLF +
+                            fileContent.toString();
+                    clientOutputStream.write(response.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                String response = "HTTP/1.1 404 FILE NOT FOUND AT PATH" + CRLF + CRLF;
+                clientOutputStream.write(response.getBytes());
+            }
+        } else if (path.split("/")[1].equals("echo")) {
+            String echoMe = path.split("/")[2];
+            String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
+                    CRLF + "Content-Length: " + echoMe.length() + CRLF +
+                    CRLF + echoMe;
+            clientWriter.write(response);
         } else if (path.equals("/user-agent")) {
             String headerPair;
-            while ((headerPair = bufferedReader.readLine()) != null) {
-                String[] splits = headerPair.split(":");
-                String headerKey = splits[0];
-                String headerValue = splits[1].strip();
+            while ((headerPair = clientReader.readLine()) != null) {
+                String[] splitString = headerPair.split(":");
+                String headerKey = splitString[0];
+                String headerValue = splitString[1].strip();
                 if (headerKey.equals("User-Agent")) {
                     String response = "HTTP/1.1 200 OK" + CRLF +
                             "Content-Type: text/plain" + CRLF +
@@ -49,16 +89,10 @@ public class ClientHandler implements Runnable {
                             response.getBytes(StandardCharsets.US_ASCII));
                 }
             }
-        } else if (path.split("/")[1].equals("echo")) {
-            String echoMe = path.split("/")[2];
-            String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
-                    CRLF + "Content-Length: " + echoMe.length() + CRLF +
-                    CRLF + echoMe;
-            bufferedWriter.write(response);
         } else {
-            bufferedWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
+            clientWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
         }
-        bufferedWriter.close();
+        clientWriter.close();
     }
 }
 
