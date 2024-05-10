@@ -114,7 +114,10 @@ public class ClientHandler implements Runnable {
             eee.write(buf);
             eee.close();
 
-            String response = "HTTP/1.1 201 CREATED" + CRLF + CRLF;
+            String response = "HTTP/1.1 201 Created" + CRLF + CRLF;
+            clientOutputStream.write(response.getBytes());
+        } else {
+            String response = "HTTP/1.1 404 IMPROPER COMMAND" + CRLF + CRLF;
             clientOutputStream.write(response.getBytes());
         }
     }
