@@ -67,11 +67,31 @@ public class ClientHandler implements Runnable {
                     clientOutputStream.write(response.getBytes());
                 }
             } else if (path.split("/")[1].equals("echo")) {
-                String echoMe = path.split("/")[2];
-                String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
-                        CRLF + "Content-Length: " + echoMe.length() + CRLF +
-                        CRLF + echoMe;
-                clientWriter.write(response);
+                String content = path.split("/")[2];
+                String header;
+                String compressionType = "";
+                boolean compressed = false;
+                while ((header = clientReader.readLine()) != null) {
+                    if (header.split(":")[0].equals("Accept-Encoding")) {
+                        compressed = true;
+                        compressionType = header.split(" ")[1];
+                    }
+                }
+                if (compressed) {
+                    if (compressionType.equals("gzip")) {
+                        String response = "HTTP/1.1 200 OK" + CRLF +
+                                "Content-Encoding: gzip" + CRLF +
+                                "Content-Type: text/plain" + CRLF +
+                                "Content-Length: " + content.length() + CRLF + CRLF +
+                                content;
+                    }
+                } else {
+                    String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
+                            CRLF + "Content-Length: " + content.length() + CRLF +
+                            CRLF + content;
+                    clientWriter.write(response);
+                }
+
             } else if (path.equals("/user-agent")) {
                 String headerPair;
                 while ((headerPair = clientReader.readLine()) != null) {
@@ -93,6 +113,7 @@ public class ClientHandler implements Runnable {
                 clientWriter.write("HTTP/1.1 404 Not Found" + CRLF + CRLF);
             }
             clientWriter.close();
+
         } else if (cmd.equals("POST")) {
             String filepath = path.replaceFirst("/files/", "");
             File file = new File(dirName, filepath);
@@ -108,7 +129,6 @@ public class ClientHandler implements Runnable {
             }
             // read file body and write it to my own file
             char[] buf = new char[contentLength];
-            clientReader.read(buf);
             System.out.println(buf);
             FileWriter eee = new FileWriter(file);
             eee.write(buf);
