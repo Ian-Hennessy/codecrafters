@@ -39,60 +39,88 @@ public class ClientHandler implements Runnable {
         BufferedWriter clientWriter =
                 new BufferedWriter(new OutputStreamWriter(clientOutputStream));
         String firstLine = clientReader.readLine();
+        String cmd = firstLine.split(" ")[0];
         String path = firstLine.split(" ")[1];
-        if (path.equals("/")) {
-            clientOutputStream.write(("HTTP/1.1 200 OK" + CRLF + CRLF).getBytes());
-        } else if (path.startsWith("/files")) {
-            String filepath = path.replaceFirst("/files/", "");
-            System.out.println("The filepath is: " + filepath);
-            File fileAtPath = new File(dirName, filepath);
-            if (!fileAtPath.exists()) {
-                String response = "HTTP/1.1 404 FILE NOT FOUND AT PATH" + CRLF + CRLF;
-                clientOutputStream.write(response.getBytes());
-            } else {
-                System.out.println("File found at filepath " + filepath);
-                BufferedReader br = new BufferedReader(new FileReader(fileAtPath));
-                String line;
-                StringBuilder fileContent = new StringBuilder();
-                while ((line = br.readLine()) != null) {
-                    fileContent.append(line);
-                }
-                String response = "HTTP/1.1 200 OK" + CRLF +
-                        "Content-Type: application/octet-stream" + CRLF +
-                        "Content-Length: " + fileContent.length() + CRLF + CRLF +
-                        fileContent;
-                System.out.println("Contents of file: " + fileContent);
-                clientOutputStream.write(response.getBytes());
-            }
-        } else if (path.split("/")[1].equals("echo")) {
-            String echoMe = path.split("/")[2];
-            String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
-                    CRLF + "Content-Length: " + echoMe.length() + CRLF +
-                    CRLF + echoMe;
-            clientWriter.write(response);
-        } else if (path.equals("/user-agent")) {
-            String headerPair;
-            while ((headerPair = clientReader.readLine()) != null) {
-                String[] splitString = headerPair.split(":");
-                String headerKey = splitString[0];
-                String headerValue = splitString[1].strip();
-                if (headerKey.equals("User-Agent")) {
+        if (cmd.equals("GET")) {
+            if (path.equals("/")) {
+                clientOutputStream.write(("HTTP/1.1 200 OK" + CRLF + CRLF).getBytes());
+            } else if (path.startsWith("/files")) {
+                String filepath = path.replaceFirst("/files/", "");
+                System.out.println("The filepath is: " + filepath);
+                File fileAtPath = new File(dirName, filepath);
+                if (!fileAtPath.exists()) {
+                    String response = "HTTP/1.1 404 FILE NOT FOUND AT PATH" + CRLF + CRLF;
+                    clientOutputStream.write(response.getBytes());
+                } else {
+                    System.out.println("File found at filepath " + filepath);
+                    BufferedReader br = new BufferedReader(new FileReader(fileAtPath));
+                    String line;
+                    StringBuilder fileContent = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        fileContent.append(line);
+                    }
                     String response = "HTTP/1.1 200 OK" + CRLF +
-                            "Content-Type: text/plain" + CRLF +
-                            "Content-Length: " + headerValue.length() + CRLF +
-                            CRLF + headerValue;
-                    System.out.println(response);
-                    // write bytes not UTF characters !
-                    clientOutputStream.write(
-                            response.getBytes(StandardCharsets.US_ASCII));
+                            "Content-Type: application/octet-stream" + CRLF +
+                            "Content-Length: " + fileContent.length() + CRLF + CRLF +
+                            fileContent;
+                    System.out.println("Contents of file: " + fileContent);
+                    clientOutputStream.write(response.getBytes());
+                }
+            } else if (path.split("/")[1].equals("echo")) {
+                String echoMe = path.split("/")[2];
+                String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
+                        CRLF + "Content-Length: " + echoMe.length() + CRLF +
+                        CRLF + echoMe;
+                clientWriter.write(response);
+            } else if (path.equals("/user-agent")) {
+                String headerPair;
+                while ((headerPair = clientReader.readLine()) != null) {
+                    String[] splitString = headerPair.split(":");
+                    String headerKey = splitString[0];
+                    String headerValue = splitString[1].strip();
+                    if (headerKey.equals("User-Agent")) {
+                        String response = "HTTP/1.1 200 OK" + CRLF +
+                                "Content-Type: text/plain" + CRLF +
+                                "Content-Length: " + headerValue.length() + CRLF +
+                                CRLF + headerValue;
+                        System.out.println(response);
+                        // write bytes not UTF characters !
+                        clientOutputStream.write(
+                                response.getBytes(StandardCharsets.US_ASCII));
+                    }
+                }
+            } else {
+                clientWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
+            }
+            clientWriter.close();
+        } else if (cmd.equals("POST")) {
+            String filepath = path.replaceFirst("/files/", "");
+            File file = new File(dirName, filepath);
+            int contentLength = 0;
+            while (true) {
+                String out = clientReader.readLine();
+                if (out.startsWith("Content-Length: "))
+                    contentLength = Integer.parseInt(out.replace("Content-Length: ", ""));
+                else if (out.isEmpty()) {
+                    System.out.println("BREAK");
+                    break;
                 }
             }
-        } else {
-            clientWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
+            // read file body and write it to my own file
+            char[] buf = new char[contentLength];
+            clientReader.read(buf);
+            System.out.println(buf);
+            FileWriter eee = new FileWriter(file);
+            eee.write(buf);
+            eee.close();
+
+            String response = "HTTP/1.1 201 CREATED" + CRLF + CRLF;
+            clientOutputStream.write(response.getBytes());
         }
-        clientWriter.close();
     }
 }
+
+
 
 
 
