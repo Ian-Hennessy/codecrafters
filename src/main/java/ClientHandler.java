@@ -90,7 +90,7 @@ public class ClientHandler implements Runnable {
                     }
                 }
             } else {
-                clientWriter.write("HTTP/1.1 404 NOT FOUND" + CRLF + CRLF);
+                clientWriter.write("HTTP/1.1 404 Not Found" + CRLF + CRLF);
             }
             clientWriter.close();
         } else if (cmd.equals("POST")) {
