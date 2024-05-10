@@ -71,7 +71,8 @@ public class ClientHandler implements Runnable {
                 String header;
                 String compressionType = "";
                 boolean compressed = false;
-                while ((header = clientReader.readLine()) != null) {
+                while ((header != null) {
+                    header = clientReader.readLine();
                     if (header.split(":")[0].equals("Accept-Encoding")) {
                         compressed = true;
                         compressionType = header.split(" ")[1];
