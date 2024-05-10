@@ -68,15 +68,15 @@ public class ClientHandler implements Runnable {
                 }
             } else if (path.split("/")[1].equals("echo")) {
                 String content = path.split("/")[2];
-                String header;
+                String header = clientReader.readLine();
                 String compressionType = "";
                 boolean compressed = false;
-                while ((header != null) {
-                    header = clientReader.readLine();
+                while (header != null) {
                     if (header.split(":")[0].equals("Accept-Encoding")) {
                         compressed = true;
                         compressionType = header.split(" ")[1];
                     }
+                    header = clientReader.readLine();
                 }
                 String response = "HTTP/1.1 200 OK" + CRLF +
                         "Content-Type: text/plain" + CRLF +
