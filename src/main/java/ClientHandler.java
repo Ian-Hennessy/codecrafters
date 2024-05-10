@@ -49,7 +49,7 @@ public class ClientHandler implements Runnable {
                 System.out.println("The filepath is: " + filepath);
                 File fileAtPath = new File(dirName, filepath);
                 if (!fileAtPath.exists()) {
-                    String response = "HTTP/1.1 404 FILE NOT FOUND AT PATH" + CRLF + CRLF;
+                    String response = "HTTP/1.1 404 Not Found" + CRLF + CRLF;
                     clientOutputStream.write(response.getBytes());
                 } else {
                     System.out.println("File found at filepath " + filepath);
@@ -117,7 +117,7 @@ public class ClientHandler implements Runnable {
             String response = "HTTP/1.1 201 Created" + CRLF + CRLF;
             clientOutputStream.write(response.getBytes());
         } else {
-            String response = "HTTP/1.1 404 IMPROPER COMMAND" + CRLF + CRLF;
+            String response = "HTTP/1.1 404 Not Found" + CRLF + CRLF;
             clientOutputStream.write(response.getBytes());
         }
     }
