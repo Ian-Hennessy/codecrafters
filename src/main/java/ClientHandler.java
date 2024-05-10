@@ -88,7 +88,7 @@ public class ClientHandler implements Runnable {
                             "Content-Length: " + content.length() + CRLF + CRLF +
                             content;
                 }
-                clientWriter.write(response);
+                clientOutputStream.write(response.getBytes());
 
             } else if (path.equals("/user-agent")) {
                 String headerPair;
