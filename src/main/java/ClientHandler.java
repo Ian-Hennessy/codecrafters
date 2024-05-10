@@ -77,20 +77,20 @@ public class ClientHandler implements Runnable {
                         compressionType = header.split(" ")[1];
                     }
                 }
-                if (compressed) {
-                    if (compressionType.equals("gzip")) {
-                        String response = "HTTP/1.1 200 OK" + CRLF +
-                                "Content-Encoding: gzip" + CRLF +
-                                "Content-Type: text/plain" + CRLF +
-                                "Content-Length: " + content.length() + CRLF + CRLF +
-                                content;
-                    }
+                if (compressed && compressionType.equals("gzip")) {
+                    String response = "HTTP/1.1 200 OK" + CRLF +
+                            "Content-Encoding: gzip" + CRLF +
+                            "Content-Type: text/plain" + CRLF +
+                            "Content-Length: " + content.length() + CRLF + CRLF +
+                            content;
+                        clientWriter.write(response);
                 } else {
                     String response = "HTTP/1.1 200 OK" + CRLF + "Content-Type: text/plain" +
                             CRLF + "Content-Length: " + content.length() + CRLF +
                             CRLF + content;
-                    clientWriter.write(response);
+                            clientWriter.write(response);
                 }
+
 
             } else if (path.equals("/user-agent")) {
                 String headerPair;
