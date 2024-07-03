@@ -75,6 +75,7 @@ public class ClientHandler implements Runnable {
                     if (header.split(":")[0].equals("Accept-Encoding")) {
                         compressed = true;
                         compressionType = header.split(" ")[1];
+                        break;
                     }
                     header = clientReader.readLine();
                 }
